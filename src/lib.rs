@@ -15,11 +15,9 @@ impl Config {
 
         let mut ignore_case = env::var("IGNORE_CASE").is_ok();
         if !ignore_case {
-            for arg in args.iter() {
-                if arg == "--ignore-case" || arg == "-i" {
-                    ignore_case = true;
-                }
-            }
+            ignore_case = args.iter()
+                .filter(|arg| arg.contains("--ignore-case") || arg.contains("-i"))
+                .any(|_| true);
         }
 
         Ok(Config {
@@ -38,9 +36,7 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>>{
         search(&config.query, &contents)
     };
 
-    for line in results {
-        println!("{}", line);
-    }
+    results.iter().for_each(|line| println!("{}", line));
     Ok(())
 }
 
